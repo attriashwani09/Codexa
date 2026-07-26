@@ -140,11 +140,7 @@ function Login() {
           </form>
 
           <div className="mt-6 space-y-3">
-            <div className="text-center">
-              <Link to="/forgot-password" className="link link-primary text-sm">
-                Forgot Password?
-              </Link>
-            </div>
+            
 
             <p className="text-center text-sm">
               Don't have an account?{" "}
