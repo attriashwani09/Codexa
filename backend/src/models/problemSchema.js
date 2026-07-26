@@ -20,7 +20,7 @@ const problemSchema = new Schema({
 
     tags: [{
         type: String,
-        enum: ["array", "linkedlist", "graph", "dp" , "tree" , "sorting" , "math"], 
+        enum: ["array", "linkedlist", "graph", "dp" , "tree" , "sorting" , "math" , "hash map"], 
         required : true
     }]  ,
 

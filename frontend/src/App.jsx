@@ -6,6 +6,7 @@ import './App.css'
 import Login from './Pages/Login'
 import SignUp from './Pages/SignUp'
 import HomePage from './Pages/HomePage'
+import AdminPanel from './Pages/Admin'
 
 import {BrowserRouter, Route, Routes , Navigate } from "react-router-dom" ; 
 import { checkAuth } from './store/authSlice' 
@@ -15,7 +16,7 @@ import { checkAuth } from './store/authSlice'
 function App(){ 
 
   // Get authentication status from Redux store
-  const {isAuthenticated , loading } = useSelector( (state) => state.auth ) ;
+  const {isAuthenticated , loading , user } = useSelector( (state) => state.auth ) ;
 
   const dispatch = useDispatch() ;
 
@@ -45,7 +46,9 @@ function App(){
 
           <Route path='/login' element = { isAuthenticated ? <Navigate to = "/" /> : <Login/>} ></Route> 
 
-          <Route path='/signup'  element = {  isAuthenticated ? <Navigate to = "/" /> :<SignUp/>} ></Route>
+          <Route path='/signup'  element = {  isAuthenticated ? <Navigate to = "/" /> :<SignUp/>} ></Route> 
+
+          <Route path='/admin' element = { isAuthenticated && user.role === 'admin'  ? <AdminPanel /> : <HomePage/> }></Route>
 
         </Routes>
       </BrowserRouter>
