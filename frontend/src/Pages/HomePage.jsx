@@ -141,7 +141,8 @@ function Homepage() {
            <option value="dp">DP</option>
            <option value="tree">Tree</option>
            <option value="sorting">Sorting</option>
-           <option value="math">Math</option>
+           <option value="math">Math</option> 
+           <option value="hash map">Hash Map</option>
          </select>
  
        </div>

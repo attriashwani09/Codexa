@@ -10,6 +10,7 @@ import AdminPanel from './Pages/Admin'
 
 import {BrowserRouter, Route, Routes , Navigate } from "react-router-dom" ; 
 import { checkAuth } from './store/authSlice' 
+import ProblemPage from './Pages/Problem'
 
 
 
@@ -48,7 +49,9 @@ function App(){
 
           <Route path='/signup'  element = {  isAuthenticated ? <Navigate to = "/" /> :<SignUp/>} ></Route> 
 
-          <Route path='/admin' element = { isAuthenticated && user.role === 'admin'  ? <AdminPanel /> : <HomePage/> }></Route>
+          <Route path='/admin' element = { isAuthenticated && user.role === 'admin'  ? <AdminPanel /> : <HomePage/> }></Route> 
+
+          <Route path='/problem/:problemId' element = { isAuthenticated ? <ProblemPage /> : <Login/> }></Route>
 
         </Routes>
       </BrowserRouter>

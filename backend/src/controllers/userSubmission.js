@@ -87,7 +87,8 @@ const submitCode = async (req , res ) => {
 
             }
         }  
-
+        
+        const testCasesTotal = requiredProblem.hiddenTestCases.length ;
 
         submittedCode.testCasesPassed = testCasesPassed ;
         submittedCode.memory = memory ;
@@ -105,7 +106,13 @@ const submitCode = async (req , res ) => {
             await req.result.save() ;
         } ;
 
-        res.status( 201 ).send("submitted Result ") ;
+        res.status( 201 ).json( { 
+            status ,
+            testCasesTotal , 
+            testCasesPassed , 
+            runtime , 
+            memory
+        }) ;
 
 
     }
