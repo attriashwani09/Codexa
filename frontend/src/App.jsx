@@ -6,7 +6,9 @@ import './App.css'
 import Login from './Pages/Login'
 import SignUp from './Pages/SignUp'
 import HomePage from './Pages/HomePage'
-import AdminPanel from './Pages/Admin'
+import Admin from './Pages/Admin' 
+import AdminCreatePanel from './components/AdminCreate' 
+import AdminDelete from './components/AdminDelete' ;
 
 import {BrowserRouter, Route, Routes , Navigate } from "react-router-dom" ; 
 import { checkAuth } from './store/authSlice' 
@@ -49,9 +51,13 @@ function App(){
 
           <Route path='/signup'  element = {  isAuthenticated ? <Navigate to = "/" /> :<SignUp/>} ></Route> 
 
-          <Route path='/admin' element = { isAuthenticated && user.role === 'admin'  ? <AdminPanel /> : <HomePage/> }></Route> 
+          <Route path='/admin' element = { isAuthenticated && user?.role === 'admin'  ? <Admin /> : <Navigate to = "/" /> }></Route> 
 
-          <Route path='/problem/:problemId' element = { isAuthenticated ? <ProblemPage /> : <Login/> }></Route>
+          <Route path='/problem/:problemId' element = { isAuthenticated ? <ProblemPage /> : <Login/> }></Route> 
+
+          <Route path='/admin/create'  element = { isAuthenticated && user?.role === 'admin' ?<AdminCreatePanel/> : <Navigate to = "/" /> }></Route> 
+
+          <Route path='/admin/delete'  element = { isAuthenticated && user?.role === 'admin' ? <AdminDelete /> : <Navigate to = "/" /> } ></Route>
 
         </Routes>
       </BrowserRouter>

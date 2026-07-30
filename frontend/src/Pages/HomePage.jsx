@@ -1,60 +1,45 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axiosClient from "../utils/axiosClient";
 import { logoutUser } from "../store/authSlice" ;
-import { NavLink } from "react-router-dom" ;
+import { Navigate, NavLink } from "react-router-dom" ; 
+import { fetchAllProblems , fetchSolvedProblems } from "../store/problemSlice";
 
 
 function Homepage() {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth); 
 
-  const [problems, setProblems] = useState([]);
-  const [solvedProblems, setSolvedProblems] = useState([]);
+  useEffect( () => {
+    dispatch( fetchAllProblems() ) ;
+
+    if( user ){
+      dispatch( fetchSolvedProblems() ) ;
+    }
+  } , [dispatch , user]) ;
+
+
+
+  const { allProblems , solvedProblems} = useSelector( (state) => state.problem ) ;
+  
   const [filters, setFilters] = useState( {
         difficulty: "all",
         tag: "all",
         status: "all",
       });
 
-  // Fetch Problems and SolvedProblems from backend
-  useEffect(() => {
-    async function fetchProblems() {
-      try {
-        const { data } = await axiosClient.get("/problem/getAllProblem");
-        setProblems(data);
-      } catch (error) {
-        console.error("Error fetching solved problems:", error);
-      }
-    }
-
-    async function fetchSolvedProblems() {
-      try {
-        const { data } = await axiosClient.get( "/problem/ProblemSolvedByUser/user" );
-        setSolvedProblems(data);
-      } catch (error) {
-        console.error("Error fetching solved problems:", error);
-      }
-    }
-
-    fetchProblems();
-    if (user) fetchSolvedProblems();
-  }, [user]);
 
 
   // Handle logout feature : 
   const handleLogout = ()=>{
-    dispatch( logoutUser() ) ;
-    setSolvedProblems([]) ; 
+    dispatch( logoutUser() ) ; 
+    <Navigate  to="/" />
   }  
 
 
-  console.log("User:", user);
-  console.log("Role:", user?.role);
 
 
   // Filter Problems : 
-  const filteredProblems = problems.filter( (problem) => {
+  const filteredProblems = allProblems.filter( (problem) => {
     const difficulityMatch = filters.difficulty === 'all'  || problem.difficulty === filters.difficulty ;
     const tagMatch = filters.tag == 'all' || problem.tags.includes( filters.tag ) ; 
     const  isSolved = solvedProblems.some( (sp) => problem._id === sp._id ) ;  
@@ -69,8 +54,8 @@ function Homepage() {
      {/* Navbar */}
      <nav className="bg-base-100 shadow-md px-5 py-4">
        <div className="mx-auto flex max-w-6xl items-center justify-between">
-         <NavLink to="/" className="text-2xl font-bold text-primary">
-           CodeMaster
+         <NavLink to="/" className="text-3xl font-extrabold text-primary">
+           Codexa
          </NavLink>
  
          <div className="flex items-center gap-3">

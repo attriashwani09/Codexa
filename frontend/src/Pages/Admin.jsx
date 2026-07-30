@@ -1,374 +1,100 @@
-import { z }  from "zod" ;
-import { zodResolver }  from "@hookform/resolvers/zod" ;
-import {  useNavigate }  from "react-router-dom" ;
-import { useFieldArray, useForm } from "react-hook-form"; 
+import { Plus, Edit, Trash2 } from "lucide-react";
+import { NavLink, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import axiosClient from "../utils/axiosClient"
+const adminOptions = [
+  {
+    id: "create",
+    title: "Create Problem",
+    description: "Add a new coding problem to the platform",
+    icon: Plus,
+    color: "bg-green-600 hover:bg-green-700",
+    bgColor: "bg-green-100 dark:bg-green-900/30",
+    route: "/admin/create",
+  },
+  {
+    id: "update",
+    title: "Update Problem",
+    description: "Edit existing problems and their details",
+    icon: Edit,
+    color: "bg-yellow-500 hover:bg-yellow-600",
+    bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
+    route: "/admin/update",
+  },
+  {
+    id: "delete",
+    title: "Delete Problem",
+    description: "Remove problems from the platform",
+    icon: Trash2,
+    color: "bg-red-600 hover:bg-red-700",
+    bgColor: "bg-red-100 dark:bg-red-900/30",
+    route: "/admin/delete",
+  },
+];
 
+function Admin() {
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-const TAGS = [ "array", "linkedlist", "graph" , "dp", "tree", "math", "sorting", "hash map" ];
+  // Guard: only admin can access
+  if (!isAuthenticated || user?.role !== "admin") {
+    return <Navigate to="/" />;
+  }
 
-const problemSchema = z.object({
-   title : z.string().min( 1 , "Title is required") , 
+  return (
+    <div className="min-h-screen bg-base-200">
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-base-content">
+            Admin Panel
+          </h1>
 
-   description : z.string().min( 1 , "Description is required ") ,
-
-   difficulty : z.enum(["easy" , "medium" , "hard"]) ,  
-
-   tags : z.array( z.enum(TAGS)).min(1 , "Select at least one tag") , 
-
-   visibleTestCases : z.array(
-    z.object({
-        input : z.string().min(1) ,
-        output : z.string().min(1) , 
-        explanation : z.string().optional()
-    })
-    ).min(1) , 
-
-    hiddenTestCases : z.array(
-        z.object({
-            input : z.string().min(1) , 
-            output : z.string().min(1) ,
-        })
-    ).min(1) , 
-
-    startCode : z.array(
-        z.object({
-            language : z.string() , 
-            initialCode : z.string().min( 1 )
-        })
-    ) , 
-
-    referenceSolution : z.array(
-        z.object({
-            language : z.string() , 
-            completeCode : z.string().min(1) ,
-        })
-    )
-}) 
-
-
-
-function AdminPanel(){
-
-    const navigate = useNavigate() ; 
-
-    const { register ,control , handleSubmit , formState : { errors } , } = useForm({ resolver : zodResolver( problemSchema ) , 
-        defaultValues : {
-            tags : ["array"] , 
-            
-            visibleTestCases : [{
-                input : "" , 
-                output : "" , 
-                explanation : ""
-            }] , 
-
-            hiddenTestCases : [{
-                input : "" , 
-                output : ""
-            }] , 
-
-            startCode : [
-                {
-                    language : "cpp" , 
-                    initialCode : "" 
-                } , 
-
-                {
-                    language : "java" , 
-                    initialCode : ""
-                } , 
-
-                {
-                    language : "javascript" , 
-                    initialCode : ""
-                }
-            ]   , 
-            
-            referenceSolution : [
-                {
-                    language : "cpp" , 
-                    completeCode : ""
-                } , 
-                {
-                    language : "java" , 
-                    completeCode : ""
-                } , 
-                {
-                    language : "javascript" , 
-                    completeCode : ""
-                }
-            ]
-        } 
-    } ) ;   
-    
-    
-    const {
-        fields: visibleFields,
-        append: appendVisible,
-        remove: removeVisible
-      } = useFieldArray({
-        control,
-        name: "visibleTestCases"
-    });
-
-
-    const {
-        fields: hiddenFields,
-        append: appendHidden,
-        remove: removeHidden
-      } = useFieldArray({
-        control,
-        name: "hiddenTestCases"
-    });
-
-
-    // On Submit 
-    const onSubmit = async ( data ) => {
-        try{
-            const response = await  axiosClient.post("/problem/create" , data ) ;
-            console.log( response.data ) ;
-            alert("Problem Created Successfully ") ;
-            navigate("/") ;
-        } 
-        catch( error ){ 
-            console.error( error ) ;
-            alert( error?.response?.data?.error || error?.response?.data?.message || error.message );
-        }
-    } 
-
-
-    return (
-  <div className="min-h-screen bg-base-200 py-10">
-
-    <div className="max-w-6xl mx-auto px-6"> 
-
-      <h1 className="mb-8 text-4xl font-bold text-base-content">
-        Create Problem
-      </h1>
-
-      <form  onSubmit={handleSubmit(onSubmit)} className="space-y-8" >
-        {/* BASIC INFO */}
-
-        <div className="rounded-xl border border-base-300 bg-base-100 p-6 shadow-lg">
-
-          <h2 className="mb-6 text-2xl font-semibold text-base-content">
-            Basic Information
-          </h2>
-
-          <div className="space-y-4">
-
-            <div>
-              <input {...register("title")} placeholder="Problem Title"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200" />
-
-              {errors.title && ( <p className="mt-1 text-sm text-red-500"> {errors.title.message} </p> )}
-            </div>
-
-            <div>
-              <textarea
-                {...register("description")}
-                rows={8}
-                placeholder="Problem Description"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
-
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <select
-                {...register("difficulty")}
-                className="w-full rounded-lg border bg-base-100 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              >
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-
-              <select
-                multiple
-                {...register("tags")}
-                className="h-40 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 "
-              >
-                <option value="array">Array</option>
-                <option value="linkedlist">Linked List</option>
-                <option value="graph">Graph</option>
-                <option value="dp">DP</option>
-                <option value="tree">Tree</option>
-                <option value="math">Math</option>
-                <option value="sorting">Sorting</option>
-                <option value="hash map"> Hash Map </option>
-              </select>
-            </div>
-          </div>
+          <p className="text-lg text-base-content/70">
+            Manage coding problems on your platform
+          </p>
         </div>
 
-        {/* VISIBLE TEST CASES */}
+        {/* Cards */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {adminOptions.map((option) => {
+            const Icon = option.icon;
 
-        <div className="rounded-xl border border-base-300 bg-base-100 p-6 shadow-lg">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-base-content">
-              Visible Test Cases
-            </h2>
-
-            <button
-              type="button"
-              onClick={() =>
-                appendVisible({
-                  input: "",
-                  output: "",
-                  explanation: "",
-                })
-              }
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-            >
-              Add
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            {visibleFields.map((field, index) => (
+            return (
               <div
-                key={field.id}
-                className="space-y-3 rounded-lg border border-gray-200 bg-base-200 p-5"
+                key={option.id}
+                className="rounded-2xl bg-base-100 p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
               >
-                <input
-                  {...register(`visibleTestCases.${index}.input`)}
-                  placeholder="Input"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
+                <div className="flex flex-col items-center text-center">
+                  {/* Icon */}
+                  <div className={`mb-5 rounded-full p-4 ${option.bgColor}`}>
+                    <Icon className="h-8 w-8 text-base-content" />
+                  </div>
 
-                <input
-                  {...register(`visibleTestCases.${index}.output`)}
-                  placeholder="Output"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
+                  {/* Title */}
+                  <h2 className="mb-3 text-2xl font-semibold text-base-content">
+                    {option.title}
+                  </h2>
 
-                <textarea
-                  {...register(
-                    `visibleTestCases.${index}.explanation`
-                  )}
-                  placeholder="Explanation"
-                  rows={4}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
+                  {/* Description */}
+                  <p className="mb-8 text-sm leading-6 text-base-content/70">
+                    {option.description}
+                  </p>
 
-                <button
-                  type="button"
-                  onClick={() => removeVisible(index)}
-                  className="rounded bg-red-500 px-3 py-1 text-sm text-white transition hover:bg-red-600"
-                >
-                  Remove
-                </button>
+                  {/* Button */}
+                  <NavLink
+                    to={option.route}
+                    className={`inline-flex w-full max-w-xs items-center justify-center rounded-lg px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 ${option.color}`}
+                  >
+                    {option.title}
+                  </NavLink>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-
-        {/* HIDDEN TEST CASES */}
-
-        <div className="rounded-xl border border-base-300 bg-base-100 p-6 shadow-lg">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-base-content">
-              Hidden Test Cases
-            </h2>
-
-            <button
-              type="button"
-              onClick={() =>
-                appendHidden({
-                  input: "",
-                  output: "",
-                })
-              }
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-            >
-              Add
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            {hiddenFields.map((field, index) => (
-              <div
-                key={field.id}
-                className="space-y-3 rounded-lg border border-gray-200 bg-base-200 p-5"
-              >
-                <input
-                  {...register(`hiddenTestCases.${index}.input`)}
-                  placeholder="Input"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
-
-                <input
-                  {...register(`hiddenTestCases.${index}.output`)}
-                  placeholder="Output"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => removeHidden(index)}
-                  className="rounded bg-red-500 px-3 py-1 text-sm text-white transition hover:bg-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* CODE TEMPLATES */}
-
-        <div className="rounded-xl border border-base-300 bg-base-100 p-6 shadow-lg ">
-          <h2 className="mb-6 text-2xl font-semibold text-base-content">
-            Code Templates & Solutions
-          </h2>
-
-          <div className="space-y-8">
-            {["c++", "java", "javascript"].map((lang, index) => (
-
-              <div key={lang} className="space-y-4 rounded-lg border border-gray-200 bg-base-200 p-5" >
-                <h3 className="text-xl font-semibold uppercase text-base-content">
-                  {lang}
-                </h3>
-
-                <textarea
-                  {...register(`startCode.${index}.initialCode`)}
-                  rows={6}
-                  placeholder="Starter Code"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
-
-                <textarea
-                  {...register(
-                    `referenceSolution.${index}.completeCode`
-                  )}
-                  rows={8}
-                  placeholder="Reference Solution"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 font-mono outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700"
-        >
-          Create Problem
-        </button>
-      </form>
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-} 
-
-
-export default AdminPanel ;
+export default Admin;
