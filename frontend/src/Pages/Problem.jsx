@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { useParams } from 'react-router';
 import axiosClient from "../utils/axiosClient";
-// import SubmissionHistory from "../components/SubmissionHistory"; 
+import SubmissionHistory from "../components/SubmissionHistory"; 
 // import ChatAi from '../components/chatAi';
 
 const langMap = {
@@ -138,7 +138,7 @@ const ProblemPage = () => {
             ${
               activeLeftTab === tab
                 ? "bg-blue-600 text-white"
-                : "text-gray-600 hover:bg-gray-200"
+                : "text-base-content hover:bg-base-300"
             }`}
           >
             {tab === "chatAI"
@@ -278,7 +278,7 @@ const ProblemPage = () => {
           ${
             activeRightTab === tab
               ? "bg-blue-600 text-white"
-              : "text-gray-600 hover:bg-gray-200"
+              : "text-base-content hover:bg-base-300"
           }`}
         >
           {tab === "testcase"
@@ -302,7 +302,7 @@ const ProblemPage = () => {
                 ${
                   selectedLanguage === lang
                     ? "bg-blue-600 text-white"
-                    : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                    : "border border-base-300 text-base-content hover:bg-base-300"
                 }`}
               >
                 {lang === "cpp"
@@ -345,7 +345,7 @@ const ProblemPage = () => {
             {/* Console */}
             <button
               onClick={() => setActiveRightTab("testcase")}
-              className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition"
+              className="px-4 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-300 transition"
             >
               Console
             </button>
@@ -355,7 +355,7 @@ const ProblemPage = () => {
               <button
                 onClick={handleRun}
                 disabled={loading}
-                className="px-5 py-2 rounded-md border border-gray-300 font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="px-5 py-2 rounded-md border border-gray-300 font-medium hover:bg-base-300 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
