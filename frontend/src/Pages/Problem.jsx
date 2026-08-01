@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react';
 import { useParams } from 'react-router';
 import axiosClient from "../utils/axiosClient";
 import SubmissionHistory from "../components/SubmissionHistory"; 
-// import ChatAi from '../components/chatAi';
+import ChatAi from '../components/chatAi';
 
 const langMap = {
   cpp: 'cpp',
@@ -250,7 +250,7 @@ const ProblemPage = () => {
           {/* Chat AI */}
           {activeLeftTab === "chatAI" && (
             <div>
-              <h2 className="text-xl font-bold mb-4">Chat with AI</h2>
+              <h2 className="text-xl font-bold mb-4">Chat with AI </h2>
 
               <ChatAi
                 problem={problem}
@@ -478,7 +478,7 @@ const ProblemPage = () => {
                             </p>
 
                             <pre
-                              className={`rounded p-3 whitespace-pre-wrap break-all
+                              className={`rounded p-3 whitespace-pre-wrap break-all text-gray-700
                             ${passed ? "bg-green-100" : "bg-red-100"}`}
                             >
                               {tc.stdout?.trim() || "(no output)"}
