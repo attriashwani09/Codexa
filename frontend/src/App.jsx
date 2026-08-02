@@ -8,7 +8,9 @@ import SignUp from './Pages/SignUp'
 import HomePage from './Pages/HomePage'
 import Admin from './Pages/Admin' 
 import AdminCreatePanel from './components/AdminCreate' 
-import AdminDelete from './components/AdminDelete' ;
+import AdminDelete from './components/AdminDelete' ; 
+import AdminUpdate from './components/AdminUpdate' ;
+import AdminUpdateProblem from './components/AdminUpdateProblem'
 
 import {BrowserRouter, Route, Routes , Navigate } from "react-router-dom" ; 
 import { checkAuth } from './store/authSlice' 
@@ -57,7 +59,11 @@ function App(){
 
           <Route path='/admin/create'  element = { isAuthenticated && user?.role === 'admin' ?<AdminCreatePanel/> : <Navigate to = "/" /> }></Route> 
 
-          <Route path='/admin/delete'  element = { isAuthenticated && user?.role === 'admin' ? <AdminDelete /> : <Navigate to = "/" /> } ></Route>
+          <Route path='/admin/delete'  element = { isAuthenticated && user?.role === 'admin' ? <AdminDelete /> : <Navigate to = "/" /> } ></Route> 
+
+          <Route path='/admin/update'  element ={ isAuthenticated && user.role === 'admin' ? <AdminUpdate /> : <Navigate  to = "/" />}></Route> 
+
+          <Route path='/admin/update/:problemId'  element = { isAuthenticated && user.role === 'admin' ? <AdminUpdateProblem /> : <Navigate  to = "/" />}> </Route>
 
         </Routes>
       </BrowserRouter>

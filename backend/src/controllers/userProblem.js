@@ -164,7 +164,7 @@ const getProblemById = async ( req , res ) => {
             return res.status(400).send("Id Field Missing");  
         } 
 
-        const requiredProblem = await problem.findById( id ).select("title description difficulty tags visibleTestCases startCode referenceSolution") ;
+        const requiredProblem = await problem.findById( id ) ; 
 
         if( !requiredProblem ){
             return res.status( 404 ).send("Problem Don't exist is Database ") ;
