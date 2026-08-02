@@ -168,8 +168,10 @@ const ProblemPage = () => {
                     problem.difficulty.slice(1)}
                 </span>
 
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white">
-                  {problem.tags}
+                <span >
+                  {problem.tags.map( (tag , index) => (
+                    <span key={index} className=" px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white  mr-3"> {tag} </span>
+                  ))}
                 </span>
               </div>
 
