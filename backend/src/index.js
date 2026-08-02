@@ -9,6 +9,7 @@ const redisClient = require("./config/redis") ;
 const authRouter = require("./routes/Auth") ;
 const problemRouter = require("./routes/problem") ;
 const submitRouter = require("./routes/submit") ;
+const aiRouter = require("./routes/chatAi");
 
 app.use( express.json() ) ;
 app.use( cookieParser() ) ;
@@ -22,7 +23,8 @@ app.use( cors({
 
 app.use( "/user" , authRouter ) ;
 app.use( "/problem" , problemRouter ) ;
-app.use("/submission" , submitRouter ) ;
+app.use("/submission" , submitRouter ) ; 
+app.use("/ai" , aiRouter ) ;
 
 
 
