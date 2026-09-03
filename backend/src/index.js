@@ -30,8 +30,7 @@ app.use("/ai" , aiRouter ) ;
 
 
 
-
-
+const PORT = process.env.PORT || 5000;
 
 const InitializeConnection = async ()=>{
 
@@ -40,8 +39,8 @@ const InitializeConnection = async ()=>{
         await Promise.all([ main() , redisClient.connect() ]) ;
         console.log("DB connected ...... ") ;
 
-        app.listen( process.env.PORT , ()=>{
-            console.log("App listening at PORT : " + process.env.PORT ) ;
+        app.listen( PORT , "0.0.0.0", ()=>{
+            console.log("App listening at PORT : " + PORT ) ;
         })
     }
     catch(err ){
