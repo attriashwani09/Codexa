@@ -20,7 +20,12 @@ const register = async (req, res) => {
 
     const token = await jwt.sign( { _id: user._id, emailId: user.emailId , role : user.role }, process.env.JWT_KEY, { expiresIn: 3600 } );
 
-    res.cookie("token", token, { maxAge: 3600 * 1000 }); // Here we multiplied by 1000 because maxAge uses milisecond value
+    res.cookie("token", token, { 
+      maxAge: 3600 * 1000 ,
+      httpOnly: true, 
+      secure: true,
+      sameSite: "none"
+    }); // Here we multiplied by 1000 because maxAge uses milisecond value
 
     // send reply to user : { _id , emailId , firstName} 
 
@@ -73,7 +78,12 @@ const login = async (req, res) => {
 
     const token = jwt.sign( { _id: user._id, emailId: user.emailId , role : user.role }, process.env.JWT_KEY, { expiresIn: 3600 } );
 
-    res.cookie("token", token, { maxAge: 3600 * 1000 });
+     res.cookie("token", token, { 
+      maxAge: 3600 * 1000 ,
+      httpOnly: true, 
+      secure: true,
+      sameSite: "none"
+    });
   
     // send reply to user : { _id , emailId , firstName} 
     const reply = {
